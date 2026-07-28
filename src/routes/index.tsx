@@ -280,15 +280,7 @@ function Hero() {
         style={{ opacity }}
         className="relative z-10 mx-auto flex h-full max-w-5xl flex-col items-center justify-center px-6 text-center text-warm"
       >
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.4, delay: 1.2, ease }}
-          className="eyebrow text-warm/80"
-          style={{ color: "color-mix(in oklab, white 80%, transparent)" }}
-        >
-          Together with our families
-        </motion.p>
+        
 
         <div className="mt-8 flex flex-col items-center">
           <motion.h1
