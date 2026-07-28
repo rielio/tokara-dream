@@ -31,7 +31,11 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Riel & Cara — 12 December 2026 · Tokara Wine Estate" },
-      
+       {
+        name: "description",
+        content:
+          "Together with our families, Riel & Cara Steenkamp joyfully invite you to celebrate their wedding on 12 December 2026 at Tokara Wine Estate, Stellenbosch.",
+      },
       { property: "og:title", content: "Riel & Cara — 12 December 2026" },
       {
         property: "og:description",
