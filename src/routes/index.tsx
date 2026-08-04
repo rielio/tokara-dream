@@ -922,10 +922,12 @@ function RSVP() {
                     </div>
                   </div>
 
-                  
+                  {error ? (
+                    <p className="text-center text-xs tracking-wide text-destructive">{error}</p>
+                  ) : null}
                   <div className="pt-6 text-center">
-                    <button type="submit" className="btn-luxe">
-                      Send with Love
+                    <button type="submit" className="btn-luxe" disabled={sending}>
+                      {sending ? "Sending…" : "Send with Love"}
                     </button>
                   </div>
                 </motion.form>
