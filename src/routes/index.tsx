@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 import heroImg from "@/assets/hero.jpg";
-import storyImg from "@/assets/story.jpg";
+import storyImg from "@/assets/story.JPG";
 import venueImg from "@/assets/venue.jpg";
 import quoteImg from "@/assets/quote.jpg";
 import g1 from "@/assets/g1.jpg";
