@@ -806,10 +806,36 @@ function RSVP() {
   const [submitted, setSubmitted] = useState(false);
   const [guests, setGuests] = useState(1);
   const [attending, setAttending] = useState<"yes" | "no" | "">("");
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+  const sendRsvp = useServerFn(submitRsvp);
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (!attending) {
+      setError("Please let us know if you can join us.");
+      return;
+    }
+    const form = new FormData(e.currentTarget as HTMLFormElement);
+    setSending(true);
+    setError("");
+    try {
+      await sendRsvp({
+        data: {
+          name: String(form.get("name") ?? "").trim(),
+          email: String(form.get("email") ?? "").trim(),
+          phone: String(form.get("phone") ?? "").trim(),
+          attending: attending === "yes",
+          guests,
+        },
+      });
+      setSubmitted(true);
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Please try again in a moment.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
