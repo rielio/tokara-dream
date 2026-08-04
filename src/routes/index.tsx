@@ -364,8 +364,11 @@ function Hero() {
 /* ------------------------------- Countdown ------------------------------- */
 
 function useCountdown(target: Date) {
-  const [now, setNow] = useState(() => Date.now());
+  // Start from the target itself so SSR and first client render match exactly,
+  // then tick with the real time after hydration.
+  const [now, setNow] = useState(() => target.getTime());
   useEffect(() => {
+    setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
