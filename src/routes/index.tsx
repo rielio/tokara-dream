@@ -807,15 +807,30 @@ function Accommodation() {
 function RSVP() {
   const [submitted, setSubmitted] = useState(false);
   const [guests, setGuests] = useState(1);
+  const [guestNames, setGuestNames] = useState<string[]>([]);
   const [attending, setAttending] = useState<"yes" | "no" | "">("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const sendRsvp = useServerFn(submitRsvp);
 
+  const setGuestCount = (n: number) => {
+    const next = Math.min(6, Math.max(1, n));
+    setGuests(next);
+    setGuestNames((prev) => {
+      const arr = prev.slice(0, next - 1);
+      while (arr.length < next - 1) arr.push("");
+      return arr;
+    });
+  };
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!attending) {
       setError("Please let us know if you can join us.");
+      return;
+    }
+    if (attending === "yes" && guestNames.some((n) => !n.trim())) {
+      setError("Please add the name of each additional guest.");
       return;
     }
     const form = new FormData(e.currentTarget as HTMLFormElement);
@@ -829,6 +844,7 @@ function RSVP() {
           phone: String(form.get("phone") ?? "").trim(),
           attending: attending === "yes",
           guests,
+          guestNames: attending === "yes" ? guestNames : [],
         },
       });
       setSubmitted(true);
@@ -839,6 +855,7 @@ function RSVP() {
       setSending(false);
     }
   };
+
 
   return (
     <section id="rsvp" className="relative overflow-hidden bg-background py-24 md:py-40">
