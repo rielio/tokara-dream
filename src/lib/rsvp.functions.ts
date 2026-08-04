@@ -1,18 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
-
-const rsvpSchema = z.object({
-  name: z.string().trim().min(1).max(100),
-  email: z.string().trim().email().max(255),
-  phone: z.string().trim().max(40).optional().default(""),
-  attending: z.boolean(),
-  guests: z.number().int().min(1).max(6),
-});
+import { rsvpSchema } from "./rsvp.schema";
 
 export const submitRsvp = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => rsvpSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const names = (data.guestNames ?? []).map((n) => n.trim()).filter(Boolean);
 
     const { error } = await supabaseAdmin.from("rsvps").insert({
       name: data.name,
@@ -20,6 +14,7 @@ export const submitRsvp = createServerFn({ method: "POST" })
       phone: data.phone || null,
       attending: data.attending,
       guests: data.guests,
+      guest_names: names.length ? names.join(", ") : null,
     });
 
     if (error) {
