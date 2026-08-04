@@ -355,7 +355,7 @@ function Hero() {
         transition={{ duration: 1, delay: 3.6 }}
         className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3 text-warm/80"
       >
-        <span className="text-[0.6rem] font-light uppercase tracking-[0.5em]">Scroll to Begin</span>
+        <span className="text-[0.6rem] font-light uppercase tracking-[0.5em]"></span>
         <ArrowDown className="scroll-arrow h-4 w-4" strokeWidth={1} />
       </motion.a>
     </section>
