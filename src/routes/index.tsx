@@ -920,7 +920,7 @@ function RSVP() {
                       <button
                         type="button"
                         aria-label="Decrease"
-                        onClick={() => setGuests((g) => Math.max(1, g - 1))}
+                        onClick={() => setGuestCount(guests - 1)}
                         className="grid h-11 w-11 place-items-center rounded-full border border-champagne text-charcoal transition-colors hover:border-gold hover:text-gold"
                       >
                         <Minus className="h-4 w-4" strokeWidth={1.25} />
@@ -931,13 +931,44 @@ function RSVP() {
                       <button
                         type="button"
                         aria-label="Increase"
-                        onClick={() => setGuests((g) => Math.min(6, g + 1))}
+                        onClick={() => setGuestCount(guests + 1)}
                         className="grid h-11 w-11 place-items-center rounded-full border border-champagne text-charcoal transition-colors hover:border-gold hover:text-gold"
                       >
                         <Plus className="h-4 w-4" strokeWidth={1.25} />
                       </button>
                     </div>
                   </div>
+
+                  <AnimatePresence initial={false}>
+                    {attending === "yes" && guestNames.length > 0 ? (
+                      <motion.div
+                        key="guest-names"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.5, ease }}
+                        className="overflow-hidden"
+                      >
+                        <div className="space-y-6 pt-2">
+                          <LabelText>Names of Additional Guests</LabelText>
+                          {guestNames.map((value, i) => (
+                            <input
+                              key={i}
+                              value={value}
+                              onChange={(ev) =>
+                                setGuestNames((prev) =>
+                                  prev.map((v, idx) => (idx === i ? ev.target.value : v)),
+                                )
+                              }
+                              placeholder={`Guest ${i + 2} full name`}
+                              className="w-full border-b border-champagne bg-transparent pb-3 font-light text-charcoal outline-none transition-colors placeholder:text-charcoal/35 focus:border-gold"
+                            />
+                          ))}
+                        </div>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+
 
                   {error ? (
                     <p className="text-center text-xs tracking-wide text-destructive">{error}</p>
