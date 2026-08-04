@@ -794,7 +794,7 @@ function Accommodation() {
   );
 }
 
-/* --------------------------------- Gallery -------------------------------- */
+
 
 
 
@@ -1163,7 +1163,6 @@ function WeddingPage() {
       <TheDay />
       <Venue />
       <Accommodation />
-      <Gallery />
       <RSVP />
       <Gifts />
       <FAQ />
