@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { submitRsvp } from "@/lib/rsvp.functions";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import {
   ArrowDown,
