@@ -19,6 +19,7 @@ export type Database = {
           attending: boolean
           created_at: string
           email: string
+          guest_names: string | null
           guests: number
           id: string
           name: string
@@ -28,6 +29,7 @@ export type Database = {
           attending: boolean
           created_at?: string
           email: string
+          guest_names?: string | null
           guests?: number
           id?: string
           name: string
@@ -37,6 +39,7 @@ export type Database = {
           attending?: boolean
           created_at?: string
           email?: string
+          guest_names?: string | null
           guests?: number
           id?: string
           name?: string

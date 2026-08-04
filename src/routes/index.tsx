@@ -807,15 +807,30 @@ function Accommodation() {
 function RSVP() {
   const [submitted, setSubmitted] = useState(false);
   const [guests, setGuests] = useState(1);
+  const [guestNames, setGuestNames] = useState<string[]>([]);
   const [attending, setAttending] = useState<"yes" | "no" | "">("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const sendRsvp = useServerFn(submitRsvp);
 
+  const setGuestCount = (n: number) => {
+    const next = Math.min(6, Math.max(1, n));
+    setGuests(next);
+    setGuestNames((prev) => {
+      const arr = prev.slice(0, next - 1);
+      while (arr.length < next - 1) arr.push("");
+      return arr;
+    });
+  };
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!attending) {
       setError("Please let us know if you can join us.");
+      return;
+    }
+    if (attending === "yes" && guestNames.some((n) => !n.trim())) {
+      setError("Please add the name of each additional guest.");
       return;
     }
     const form = new FormData(e.currentTarget as HTMLFormElement);
@@ -829,6 +844,7 @@ function RSVP() {
           phone: String(form.get("phone") ?? "").trim(),
           attending: attending === "yes",
           guests,
+          guestNames: attending === "yes" ? guestNames : [],
         },
       });
       setSubmitted(true);
@@ -839,6 +855,7 @@ function RSVP() {
       setSending(false);
     }
   };
+
 
   return (
     <section id="rsvp" className="relative overflow-hidden bg-background py-24 md:py-40">
@@ -903,7 +920,7 @@ function RSVP() {
                       <button
                         type="button"
                         aria-label="Decrease"
-                        onClick={() => setGuests((g) => Math.max(1, g - 1))}
+                        onClick={() => setGuestCount(guests - 1)}
                         className="grid h-11 w-11 place-items-center rounded-full border border-champagne text-charcoal transition-colors hover:border-gold hover:text-gold"
                       >
                         <Minus className="h-4 w-4" strokeWidth={1.25} />
@@ -914,13 +931,44 @@ function RSVP() {
                       <button
                         type="button"
                         aria-label="Increase"
-                        onClick={() => setGuests((g) => Math.min(6, g + 1))}
+                        onClick={() => setGuestCount(guests + 1)}
                         className="grid h-11 w-11 place-items-center rounded-full border border-champagne text-charcoal transition-colors hover:border-gold hover:text-gold"
                       >
                         <Plus className="h-4 w-4" strokeWidth={1.25} />
                       </button>
                     </div>
                   </div>
+
+                  <AnimatePresence initial={false}>
+                    {attending === "yes" && guestNames.length > 0 ? (
+                      <motion.div
+                        key="guest-names"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.5, ease }}
+                        className="overflow-hidden"
+                      >
+                        <div className="space-y-6 pt-2">
+                          <LabelText>Names of Additional Guests</LabelText>
+                          {guestNames.map((value, i) => (
+                            <input
+                              key={i}
+                              value={value}
+                              onChange={(ev) =>
+                                setGuestNames((prev) =>
+                                  prev.map((v, idx) => (idx === i ? ev.target.value : v)),
+                                )
+                              }
+                              placeholder={`Guest ${i + 2} full name`}
+                              className="w-full border-b border-champagne bg-transparent pb-3 font-light text-charcoal outline-none transition-colors placeholder:text-charcoal/35 focus:border-gold"
+                            />
+                          ))}
+                        </div>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+
 
                   {error ? (
                     <p className="text-center text-xs tracking-wide text-destructive">{error}</p>
