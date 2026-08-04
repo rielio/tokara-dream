@@ -13,7 +13,7 @@ import {
   Minus,
 } from "lucide-react";
 
-import heroImg from "@/assets/hero.JPG";
+import heroImg from "@/assets/hero.jpg";
 import storyImg from "@/assets/story.jpg";
 import venueImg from "@/assets/venue.jpg";
 import quoteImg from "@/assets/quote.jpg";
