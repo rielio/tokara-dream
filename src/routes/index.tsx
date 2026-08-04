@@ -892,34 +892,7 @@ function RSVP() {
                     </div>
                   </div>
 
-                  <div>
-                    <LabelText>Meal Preference</LabelText>
-                    <select
-                      name="meal"
-                      className="mt-3 w-full appearance-none border-0 border-b border-champagne bg-transparent py-3 font-serif text-lg text-charcoal outline-none transition-colors focus:border-gold"
-                      defaultValue=""
-                    >
-                      <option value="" disabled>Select…</option>
-                      <option>Beef</option>
-                      <option>Lamb</option>
-                      <option>Fish</option>
-                      <option>Vegetarian</option>
-                      <option>Vegan</option>
-                    </select>
-                  </div>
-
-                  <Field label="Dietary Requirements" name="diet" />
-
-                  <div>
-                    <LabelText>A Message for the Couple</LabelText>
-                    <textarea
-                      name="message"
-                      rows={3}
-                      className="mt-3 w-full resize-none border-0 border-b border-champagne bg-transparent py-3 font-serif text-lg italic text-charcoal outline-none transition-colors placeholder:text-charcoal/40 focus:border-gold"
-                      placeholder="Write a note…"
-                    />
-                  </div>
-
+                  
                   <div className="pt-6 text-center">
                     <button type="submit" className="btn-luxe">
                       Send with Love
