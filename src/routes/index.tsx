@@ -868,7 +868,7 @@ function RSVP() {
                   </div>
 
                   <div>
-                    <LabelText>Number of Guests</LabelText>
+                    <LabelText>Number of Guests (Invitation Only)</LabelText>
                     <div className="mt-3 flex items-center gap-4">
                       <button
                         type="button"
