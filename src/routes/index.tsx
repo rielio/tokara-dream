@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 import heroImg from "@/assets/hero.jpg";
-import storyImg from "@/assets/story.JPG";
+import storyImg from "@/assets/story-photo.jpg";
 import venueImg from "@/assets/venue.jpg";
 import quoteImg from "@/assets/quote.jpg";
 import g1 from "@/assets/g1.jpg";
@@ -364,8 +364,11 @@ function Hero() {
 /* ------------------------------- Countdown ------------------------------- */
 
 function useCountdown(target: Date) {
-  const [now, setNow] = useState(() => Date.now());
+  // Start from the target itself so SSR and first client render match exactly,
+  // then tick with the real time after hydration.
+  const [now, setNow] = useState(() => target.getTime());
   useEffect(() => {
+    setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
@@ -554,23 +557,21 @@ function TheDay() {
           </h2>
         </Reveal>
 
-        <div className="relative mx-auto mt-24 max-w-2xl">
-          {/* Vertical gold line */}
-          <div className="absolute left-4 top-2 h-full w-px bg-gradient-to-b from-transparent via-gold to-transparent md:left-1/2 md:-translate-x-1/2" />
+        <div className="relative mx-auto mt-16 max-w-2xl md:mt-24">
+          {/* Vertical gold line (desktop only centred rail) */}
+          <div className="absolute left-1/2 top-2 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-gold to-transparent md:block" />
 
-          <ul className="flex flex-col gap-14">
+          <ul className="flex flex-col gap-12 md:gap-14">
             {SCHEDULE.map((event, i) => {
               const isLeft = i % 2 === 0;
               return (
                 <Reveal key={event.time} delay={i * 0.05}>
                   <li
-                    className={`relative grid grid-cols-[2rem_1fr] items-center gap-6 md:grid-cols-2 ${
+                    className={`relative flex flex-col items-center text-center md:grid md:grid-cols-2 md:items-center md:gap-6 md:text-left ${
                       isLeft ? "" : "md:[direction:rtl]"
                     }`}
                   >
-                    <span className="absolute left-4 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 md:left-1/2">
-                      <span className="block h-3 w-3 rounded-full bg-gold shadow-[0_0_0_6px_var(--color-background),0_0_0_7px_var(--color-gold)]" />
-                    </span>
+                    <span className="mb-4 block h-2 w-2 rounded-full bg-gold md:absolute md:left-1/2 md:top-1/2 md:z-10 md:mb-0 md:h-3 md:w-3 md:-translate-x-1/2 md:-translate-y-1/2 md:shadow-[0_0_0_6px_var(--color-background),0_0_0_7px_var(--color-gold)]" />
                     <div className={`${isLeft ? "md:pr-14 md:text-right" : "md:pl-14 md:text-left"} md:[direction:ltr]`}>
                       <p className="font-serif text-2xl tracking-wide text-gold md:text-3xl">
                         {event.time}
@@ -586,6 +587,7 @@ function TheDay() {
               );
             })}
           </ul>
+
 
           <Reveal delay={0.2}>
             <p className="mt-20 text-center font-script text-4xl text-gold">
