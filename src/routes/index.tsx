@@ -125,7 +125,6 @@ const NAV = [
   { label: "Story", href: "#story" },
   { label: "The Day", href: "#day" },
   { label: "Venue", href: "#venue" },
-  { label: "Gallery", href: "#gallery" },
   { label: "Accommodation", href: "#stay" },
   { label: "RSVP", href: "#rsvp" },
 ];
@@ -797,76 +796,7 @@ function Accommodation() {
 
 /* --------------------------------- Gallery -------------------------------- */
 
-const GALLERY = [g1, g2, g3, g4, g5, g6];
 
-function Gallery() {
-  const [lightbox, setLightbox] = useState<number | null>(null);
-  return (
-    <section id="gallery" className="relative overflow-hidden bg-warm py-24 md:py-40">
-      <div className="mx-auto max-w-[1400px] px-6 lg:px-12">
-        <Reveal>
-          <p className="eyebrow text-center">Moments</p>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <h2 className="mt-6 text-center font-serif text-[clamp(2.5rem,5vw,4.5rem)]">
-            The <span className="italic text-olive">quiet</span> in-between
-          </h2>
-        </Reveal>
-
-        <div className="mt-20 columns-1 gap-6 sm:columns-2 lg:columns-3 [column-fill:_balance]">
-          {GALLERY.map((src, i) => (
-            <Reveal key={i} delay={(i % 3) * 0.08}>
-              <button
-                type="button"
-                onClick={() => setLightbox(i)}
-                className="group mb-6 block w-full overflow-hidden rounded-2xl shadow-soft transition-shadow duration-500 hover:shadow-luxe"
-              >
-                <img
-                  src={src}
-                  alt={`Gallery image ${i + 1}`}
-                  loading="lazy"
-                  className="h-auto w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110"
-                />
-              </button>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {lightbox !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            onClick={() => setLightbox(null)}
-            className="fixed inset-0 z-[70] flex items-center justify-center bg-charcoal/90 p-6 backdrop-blur-xl"
-          >
-            <motion.img
-              key={lightbox}
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.6, ease }}
-              src={GALLERY[lightbox]}
-              alt="Gallery preview"
-              className="max-h-[90vh] max-w-[92vw] rounded-lg object-contain shadow-luxe"
-            />
-            <button
-              type="button"
-              onClick={() => setLightbox(null)}
-              aria-label="Close"
-              className="absolute right-6 top-6 text-3xl font-light text-warm"
-            >
-              ×
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </section>
-  );
-}
 
 /* ---------------------------------- RSVP ---------------------------------- */
 
