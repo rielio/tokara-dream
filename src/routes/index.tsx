@@ -533,12 +533,13 @@ function QuoteSection() {
 /* --------------------------------- The Day -------------------------------- */
 
 const SCHEDULE = [
-  { time: "2:30 PM", title: "Guests Arrive", note: "Welcome drinks on the lawn" },
-  { time: "3:00 PM", title: "Ceremony", note: "Vows beneath the oaks" },
-  { time: "4:00 PM", title: "Canapés", note: "Champagne & vineyard bites" },
-  { time: "5:00 PM", title: "Reception", note: "The celebration begins" },
-  { time: "7:00 PM", title: "Dinner", note: "A long table beneath the stars" },
-  { time: "8:00 PM", title: "First Dance", note: "Until late…" },
+  { time: "5:00 PM", title: "Guests Arrive", note: "Welcome drinks on the lawn" },
+  { time: "5:30 PM", title: "Ceremony", note: "Vows on open lawn" },
+  { time: "6:30 PM", title: "Canapés", note: "Vineyard bites" },
+  { time: "7:15 PM", title: "Seated", note: "Guests moves to venue" },
+  { time: "7:30 PM", title: "Bride & Groom Arrives", note: "" },
+  { time: "8:00 PM", title: "Dinner", note: "Food will be served" },
+  { time: "9:00 PM", title: "First Dance", note: "Until late…" },
 ];
 
 function TheDay() {
