@@ -19,6 +19,7 @@ import heroImg from "@/assets/hero.jpg";
 import storyImg from "@/assets/story-photo.jpg";
 import venueImg from "@/assets/venue.jpg";
 import quoteImg from "@/assets/quote.jpg";
+import dressCodeColors from "@/assets/dress-code-colors.png";
 import g1 from "@/assets/g1.jpg";
 import g2 from "@/assets/g2.jpg";
 import g3 from "@/assets/g3.jpg";
@@ -620,15 +621,26 @@ function Venue() {
           viewport={{ once: true }}
           className="absolute inset-0 h-full w-full object-cover"
         />
+
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-warm" />
+
         <div className="absolute inset-0 flex items-end justify-center pb-16 md:pb-24">
           <Reveal>
             <div className="text-center">
-              <p className="eyebrow" style={{ color: "var(--color-gold)" }}>The Venue</p>
+              <p
+                className="eyebrow"
+                style={{ color: "var(--color-gold)" }}
+              >
+                The Venue
+              </p>
+
               <h2 className="mt-4 font-serif text-[clamp(3.5rem,10vw,8rem)] leading-none tracking-wider text-warm">
                 TOKARA
               </h2>
-              <p className="mt-2 font-script text-3xl text-gold md:text-4xl">Wine Estate</p>
+
+              <p className="mt-2 font-script text-3xl text-gold md:text-4xl">
+                Wine Estate
+              </p>
             </div>
           </Reveal>
         </div>
@@ -678,16 +690,33 @@ function Venue() {
             {
               icon: Sparkles,
               title: "Dress Code",
-              body: "Formal Garden Elegance\nBlack tie optional.",
+              body: "Formal Elegance",
+              image: dressCodeColors,
             },
           ].map((card, i) => (
             <Reveal key={card.title} delay={i * 0.08}>
               <div className="group h-full rounded-2xl border border-champagne/60 bg-warm p-8 shadow-soft transition-all duration-700 hover:-translate-y-1 hover:border-gold hover:shadow-luxe">
-                <card.icon className="h-6 w-6 text-gold" strokeWidth={1.25} />
-                <h3 className="mt-6 font-serif text-2xl text-charcoal">{card.title}</h3>
+                <card.icon
+                  className="h-6 w-6 text-gold"
+                  strokeWidth={1.25}
+                />
+
+                <h3 className="mt-6 font-serif text-2xl text-charcoal">
+                  {card.title}
+                </h3>
+
                 <p className="mt-3 whitespace-pre-line text-sm font-light leading-relaxed text-charcoal/70">
                   {card.body}
                 </p>
+
+                {card.image && (
+                  <img
+                    src={card.image}
+                    alt="Formal Elegance colour palette"
+                    className="mt-5 h-auto w-full max-w-[240px] object-contain"
+                  />
+                )}
+
                 {card.cta && (
                   <a
                     href={card.cta.href}
