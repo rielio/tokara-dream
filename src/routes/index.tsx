@@ -383,7 +383,7 @@ function useCountdown(target: Date) {
 }
 
 function Countdown() {
-  const target = new Date("2026-12-12T15:00:00+02:00");
+  const target = new Date("2026-12-12T17:30:00+02:00");
   const t = useCountdown(target);
   const units: [string, number][] = [
     ["Days", t.days],
