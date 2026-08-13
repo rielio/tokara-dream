@@ -752,10 +752,9 @@ const HOTELS = [
     href: "https://maps.google.com/?q=Lanzerac+Wine+Estate",
   },
   {
-    name: "Le Franschhoek Hotel",
+    name: "Accommodation Near The Venue",
     image: h3,
-    distance: "18 km · Franschhoek",
-    href: "https://maps.google.com/?q=Le+Franschhoek+Hotel",
+    href: "https://www.lekkeslaap.co.za/accommodation-in/stellenbosch?sort=recommended&start=2026-12-11&end=2026-12-13&room=1&adult=2&child=0&child_ages=&pax=2",
   },
 ];
 
