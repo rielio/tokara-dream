@@ -129,6 +129,7 @@ const NAV = [
   { label: "The Day", href: "#day" },
   { label: "Venue", href: "#venue" },
   { label: "Accommodation", href: "#stay" },
+  { label: "Gifts", href: "#gifts" },
   { label: "RSVP", href: "#rsvp" },
 ];
 
@@ -1080,7 +1081,10 @@ function Gifts() {
   const [showBankDetails, setShowBankDetails] = useState(false);
 
   return (
-    <section className="relative overflow-hidden bg-warm py-24 md:py-40">
+    <section
+      id="gifts"
+      className="relative overflow-hidden bg-warm py-24 md:py-40"
+    >
       <div className="mx-auto max-w-3xl px-6 text-center">
         <Reveal>
           <p className="eyebrow">A Note on Gifts</p>
