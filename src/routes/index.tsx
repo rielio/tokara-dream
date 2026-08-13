@@ -740,16 +740,16 @@ function Venue() {
 
 const HOTELS = [
   {
-    name: "Delaire Graff Estate",
+    name: "Banhoek Corner",
     image: h1,
-    distance: "1.2 km from Tokara",
-    href: "https://maps.google.com/?q=Delaire+Graff+Estate",
+    distance: "1.4 km from Tokara",
+    href: "https://www.google.com/maps/place/Banhoek+Corner+Guesthouse/@-33.917258,18.9048565,5782m/data=!3m1!1e3!4m18!1m6!2m5!1sHotels!5m3!5m2!1s2026-12-11!2i2!3m10!1s0x1dcdb1c6ac7ff239:0xbc97234f36701b86!5m4!1s2026-12-11!2i2!4m1!1i2!8m2!3d-33.9172575!4d18.9325226!16s%2Fg%2F11lg321rrc?entry=ttu&g_ep=EgoyMDI2MDgxMS4wIKXMDSoASAFQAw%3D%3D",
   },
   {
-    name: "Lanzerac Wine Estate",
+    name: "De Zeven Guest Lodge",
     image: h2,
-    distance: "8 km · Stellenbosch",
-    href: "https://maps.google.com/?q=Lanzerac+Wine+Estate",
+    distance: "2.2 km from Tokara",
+    href: "https://www.google.com/maps/place/De+Zeven+Guest+Lodge/@-33.922155,18.9285582,1652m/data=!3m1!1e3!4m11!3m10!1s0x1dcdb1601fdcf74d:0x4eccb3f13629f25b!5m4!1s2026-12-11!2i2!4m1!1i2!8m2!3d-33.9217232!4d18.9338804!16s%2Fg%2F11gwmsw97v?entry=ttu&g_ep=EgoyMDI2MDgxMS4wIKXMDSoASAFQAw%3D%3D",
   },
   {
     name: "Accommodation Near The Venue",
