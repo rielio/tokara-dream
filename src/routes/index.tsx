@@ -1083,14 +1083,48 @@ function Gifts() {
         <Reveal>
           <p className="eyebrow">A Note on Gifts</p>
         </Reveal>
+
         <Reveal delay={0.15}>
           <p className="mt-10 font-serif text-[clamp(1.75rem,3.2vw,2.75rem)] italic leading-[1.35] text-charcoal">
-            "Our greatest gift is celebrating this day with you. Should you wish
-            to bless us further, a contribution towards our future together
-            would be sincerely appreciated."
+            Your presence is the greatest gift, and we feel incredibly blessed
+            to celebrate this special day with you.
           </p>
         </Reveal>
-        <Reveal delay={0.3}>
+
+        <Reveal delay={0.25}>
+          <p className="mx-auto mt-8 max-w-2xl font-light leading-relaxed text-charcoal/70">
+            Should you wish to bless us further, we have created a small
+            registry with a few things we would love for our new home.
+          </p>
+        </Reveal>
+
+        <Reveal delay={0.35}>
+          <a
+            href="https://www.yuppiechef.com/yc9799758"
+            target="_blank"
+            rel="noreferrer"
+            className="btn-luxe mt-10 inline-flex"
+          >
+            View Our Registry
+          </a>
+        </Reveal>
+
+        <Reveal delay={0.45}>
+          <p className="mx-auto mt-10 max-w-2xl font-light leading-relaxed text-charcoal/70">
+            If you'd prefer to contribute towards our future together instead,
+            a monetary gift would be sincerely appreciated.
+          </p>
+        </Reveal>
+
+        <Reveal delay={0.55}>
+          <p className="mx-auto mt-6 max-w-2xl font-light leading-relaxed text-charcoal/70">
+            If you are unable to make a contribution, please know that your
+            presence, love and prayers for our new journey together are more
+            than enough and deeply appreciated.
+          </p>
+        </Reveal>
+
+        <Reveal delay={0.65}>
           <Heart
             className="mx-auto mt-12 h-6 w-6 fill-gold text-gold"
             strokeWidth={1}
