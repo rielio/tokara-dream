@@ -1077,6 +1077,8 @@ function Field({
 /* ---------------------------------- Gifts --------------------------------- */
 
 function Gifts() {
+  const [showBankDetails, setShowBankDetails] = useState(false);
+
   return (
     <section className="relative overflow-hidden bg-warm py-24 md:py-40">
       <div className="mx-auto max-w-3xl px-6 text-center">
@@ -1117,20 +1119,127 @@ function Gifts() {
         </Reveal>
 
         <Reveal delay={0.55}>
-          <p className="mx-auto mt-6 max-w-2xl font-light leading-relaxed text-charcoal/70">
+          <button
+            type="button"
+            onClick={() => setShowBankDetails(true)}
+            className="btn-luxe mt-8 inline-flex"
+          >
+            View Bank Details
+          </button>
+        </Reveal>
+
+        <Reveal delay={0.65}>
+          <p className="mx-auto mt-10 max-w-2xl font-light leading-relaxed text-charcoal/70">
             If you are unable to make a contribution, please know that your
             presence, love and prayers for our new journey together are more
             than enough and deeply appreciated.
           </p>
         </Reveal>
 
-        <Reveal delay={0.65}>
+        <Reveal delay={0.75}>
           <Heart
             className="mx-auto mt-12 h-6 w-6 fill-gold text-gold"
             strokeWidth={1}
           />
         </Reveal>
       </div>
+
+      {/* Bank Details Popup */}
+      <AnimatePresence>
+        {showBankDetails && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-charcoal/60 px-6 backdrop-blur-sm"
+            onClick={() => setShowBankDetails(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 30, scale: 0.96 }}
+              transition={{ duration: 0.4, ease }}
+              className="relative w-full max-w-md rounded-3xl bg-warm p-8 shadow-luxe md:p-12"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setShowBankDetails(false)}
+                aria-label="Close bank details"
+                className="absolute right-6 top-6 text-2xl font-light text-charcoal/50 transition-colors hover:text-gold"
+              >
+                ×
+              </button>
+
+              <p className="eyebrow text-center">Monetary Gift</p>
+
+              <h3 className="mt-5 text-center font-serif text-3xl text-charcoal">
+                Bank Details
+              </h3>
+
+              <div className="mt-10 space-y-5 border-y border-champagne/70 py-8 text-left">
+                <div className="flex justify-between gap-6">
+                  <span className="text-sm font-light text-charcoal/60">
+                    Bank
+                  </span>
+                  <span className="font-serif text-charcoal">
+                    FNB
+                  </span>
+                </div>
+
+                <div className="flex justify-between gap-6">
+                  <span className="text-sm font-light text-charcoal/60">
+                    Account Type
+                  </span>
+                  <span className="font-serif text-charcoal">
+                    Savings
+                  </span>
+                </div>
+
+                <div className="flex justify-between gap-6">
+                  <span className="text-sm font-light text-charcoal/60">
+                    Account Number
+                  </span>
+                  <span className="font-serif text-charcoal">
+                    62769556005
+                  </span>
+                </div>
+
+                <div className="flex justify-between gap-6">
+                  <span className="text-sm font-light text-charcoal/60">
+                    Account Holder
+                  </span>
+                  <span className="font-serif text-charcoal">
+                    Cara Smith
+                  </span>
+                </div>
+
+                <div className="flex justify-between gap-6">
+                  <span className="text-sm font-light text-charcoal/60">
+                    Reference
+                  </span>
+                  <span className="font-serif text-gold">
+                    WEDDING
+                  </span>
+                </div>
+              </div>
+
+              <p className="mt-8 text-center text-xs font-light leading-relaxed text-charcoal/60">
+                Thank you for your kindness and generosity as we begin this new
+                chapter together.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => setShowBankDetails(false)}
+                className="btn-luxe mt-8 w-full"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
