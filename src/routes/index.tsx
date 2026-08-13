@@ -1105,12 +1105,16 @@ function Gifts() {
 
 const FAQS = [
   {
+    q: "RSVP date?",
+    a: "Please RSVP before 1 September 2026. This will help us with accurate arrangements.",
+  },
+  {
     q: "Can children attend?",
     a: "We adore your little ones, but our celebration will be an adults-only affair to allow every guest a relaxed evening.",
   },
   {
     q: "May I bring a plus one?",
-    a: "Plus ones are extended by name on your invitation. Kindly indicate them in your RSVP.",
+    a: "No plus one. Invitation Only.",
   },
   {
     q: "Is there parking at Tokara?",
@@ -1122,11 +1126,11 @@ const FAQS = [
   },
   {
     q: "What is the dress code?",
-    a: "Formal Garden Elegance. Long dresses for her, dark suits or black tie for him. Comfortable heels for the grass.",
+    a: "Formal Garden Elegance. Please dress according to the Dress code colors.",
   },
   {
     q: "Do you have a gift registry?",
-    a: "No traditional registry — please see our note on gifts above.",
+    a: "Yes we do have a traditional registry — please see our note on gifts above.",
   },
 ];
 
