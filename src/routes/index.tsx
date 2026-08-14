@@ -1253,7 +1253,7 @@ function Gifts() {
 const FAQS = [
   {
     q: "RSVP date?",
-    a: "Please RSVP before 1 September 2026. This will help us with accurate arrangements.",
+    a: "Please RSVP before 1 October 2026. This will help us with accurate arrangements.",
   },
   {
     q: "Can children attend?",
