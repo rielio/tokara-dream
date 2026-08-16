@@ -899,8 +899,8 @@ function RSVP() {
         </Reveal>
         <Reveal delay={0.2}>
           <p className="mx-auto mt-6 max-w-lg text-center text-sm font-light leading-relaxed text-charcoal/70">
-            Please respond by 1 November 2026 so we may prepare a seat at the
-            table for you.
+            Please respond by 1 October 2026 so we may prepare a seat at the
+            table for you. Strictly no uninvited plus one's.
           </p>
         </Reveal>
 
