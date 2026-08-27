@@ -3,8 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 import { rsvpSchema } from "./rsvp.schema";
 
 const RSVP_RECIPIENT = "caras24@icloud.com";
-const SUPABASE_URL = "https://nrpospftmajjujntgsrz.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_c0OqG3NRNidxIkrmPbVyZA_befQ3rKV";
+const SUPABASE_URL = "https://iwhcewstdcgxocduxiao.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ebTJHBwzYvvCD8ouNUMtiw_rrJqe6Ip";
 
 function escapeHtml(value: string) {
   return value
@@ -18,9 +18,6 @@ function escapeHtml(value: string) {
 export const submitRsvp = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => rsvpSchema.parse(data))
   .handler(async ({ data }) => {
-    // Use the existing Supabase publishable key so the RSVP works on Vercel
-    // without requiring a private service-role key. The database RLS policy
-    // explicitly allows public RSVP inserts.
     const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
       auth: {
         persistSession: false,
