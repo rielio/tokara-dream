@@ -1,10 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createClient } from "@supabase/supabase-js";
 import { rsvpSchema } from "./rsvp.schema";
 
 const RSVP_RECIPIENT = "caras24@icloud.com";
-const SUPABASE_URL = "https://iwhcewstdcgxocduxiao.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ebTJHBwzYvvCD8ouNUMtiw_rrJqe6Ip";
 
 function escapeHtml(value: string) {
   return value
@@ -18,36 +15,15 @@ function escapeHtml(value: string) {
 export const submitRsvp = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => rsvpSchema.parse(data))
   .handler(async ({ data }) => {
-    const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-      },
-    });
-
-    const names = (data.guestNames ?? []).map((n) => n.trim()).filter(Boolean);
-
-    const { error } = await supabase.from("rsvps").insert({
-      name: data.name,
-      email: data.email,
-      phone: data.phone || null,
-      attending: data.attending,
-      guests: data.guests,
-      guest_names: names.length ? names.join(", ") : null,
-    });
-
-    if (error) {
-      console.error("[rsvp] insert failed", error.message);
-      throw new Error("We couldn't save your reply. Please try again.");
-    }
-
     const resendApiKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.RSVP_FROM_EMAIL;
 
     if (!resendApiKey || !fromEmail) {
       console.error("[rsvp] RESEND_API_KEY or RSVP_FROM_EMAIL is not configured");
-      throw new Error("Your reply was saved, but the notification email is not configured yet.");
+      throw new Error("The RSVP email service is not configured yet. Please try again later.");
     }
+
+    const names = (data.guestNames ?? []).map((n) => n.trim()).filter(Boolean);
 
     const guestNamesHtml = names.length
       ? `<p><strong>Additional guests:</strong> ${escapeHtml(names.join(", "))}</p>`
@@ -81,7 +57,7 @@ export const submitRsvp = createServerFn({ method: "POST" })
     if (!emailResponse.ok) {
       const details = await emailResponse.text();
       console.error("[rsvp] email notification failed", details);
-      throw new Error("Your reply was saved, but we couldn't send the notification email.");
+      throw new Error("We couldn't send your reply. Please try again.");
     }
 
     return { ok: true };
