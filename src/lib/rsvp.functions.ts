@@ -13,7 +13,7 @@ function escapeHtml(value: string) {
 }
 
 export const submitRsvp = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => rsvpSchema.parse(data))
+  .validator((data: unknown) => rsvpSchema.parse(data))
   .handler(async ({ data }) => {
     const resendApiKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.RSVP_FROM_EMAIL;
