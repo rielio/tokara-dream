@@ -1105,14 +1105,24 @@ function Gifts() {
         </Reveal>
 
         <Reveal delay={0.35}>
-          <a
-            href="https://www.yuppiechef.com/yc9799758"
-            target="_blank"
-            rel="noreferrer"
-            className="btn-luxe mt-10 inline-flex"
-          >
-            View Our Registry
-          </a>
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <a
+              href="https://www.yuppiechef.com/yc9799758"
+              target="_blank"
+              rel="noreferrer"
+              className="btn-luxe inline-flex"
+            >
+              View Our Registry
+            </a>
+            <a
+              href="https://www.mrphome.com/en_za/giftregistry/view/index/id/CSWEDD9975"
+              target="_blank"
+              rel="noreferrer"
+              className="btn-luxe inline-flex"
+            >
+              Mr Price Home Registry
+            </a>
+          </div>
         </Reveal>
 
         <Reveal delay={0.45}>
