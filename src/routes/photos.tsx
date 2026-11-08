@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Download, ImagePlus, Play, Trophy, Upload } from "lucide-react";
+import { Download, ImagePlus, Play, Trophy, Upload, X, ChevronLeft, ChevronRight } from "lucide-react";
 import g1 from "@/assets/g1.jpg";
 import g2 from "@/assets/g2.jpg";
 import g3 from "@/assets/g3.jpg";
@@ -30,6 +30,7 @@ function GuestPhotos() {
   const [selected, setSelected] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -47,6 +48,21 @@ function GuestPhotos() {
   }, []);
 
   const filtered = useMemo(() => table === "all" ? media : media.filter(item => item.table === Number(table)), [media, table]);
+
+  useEffect(() => {
+    if (viewerIndex === null) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setViewerIndex(null);
+      if (event.key === "ArrowRight") setViewerIndex(i => i === null ? null : (i + 1) % filtered.length);
+      if (event.key === "ArrowLeft") setViewerIndex(i => i === null ? null : (i - 1 + filtered.length) % filtered.length);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [viewerIndex, filtered.length]);
+
+  function toggleSelected(id: string) {
+    setSelected(current => current.includes(id) ? current.filter(x => x !== id) : [...current, id]);
+  }
 
   async function addFiles(files: FileList | null) {
     if (!files?.length) return;
@@ -137,15 +153,36 @@ function GuestPhotos() {
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-5">
-          {filtered.map(item => (
-            <button key={item.id} onClick={() => setSelected(current => current.includes(item.id) ? current.filter(x => x !== item.id) : [...current, item.id])} className={`group relative overflow-hidden rounded-2xl bg-white text-left shadow-sm ${selected.includes(item.id) ? "ring-2 ring-[#ad8a49]" : ""}`}>
+          {filtered.map((item, index) => (
+            <div key={item.id} className={`group relative overflow-hidden rounded-2xl bg-white text-left shadow-sm ${selected.includes(item.id) ? "ring-2 ring-[#ad8a49]" : ""}`}>
+              <button onClick={() => setViewerIndex(index)} className="block w-full text-left">
               {item.type === "photo" ? <img src={item.src} alt={item.name} className="aspect-[4/5] w-full object-cover" /> : <video src={item.src} className="aspect-[4/5] w-full object-cover" muted playsInline controls />}
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 pt-10 text-white"><p className="text-[0.65rem] uppercase tracking-[0.16em]">Table {item.table}</p><p className="mt-1 truncate text-xs">{item.name}</p></div>
               {item.type === "video" && <span className="absolute left-3 top-3 rounded-full bg-black/50 p-2 text-white"><Play className="h-3 w-3 fill-current" /></span>}
-              {selected.includes(item.id) && <span className="absolute right-3 top-3 rounded-full bg-[#ad8a49] p-2 text-white"><Download className="h-3 w-3" /></span>}
-            </button>
+              </button>
+              <label className="absolute right-3 top-3 flex cursor-pointer items-center gap-2 rounded-full bg-black/55 px-3 py-2 text-white backdrop-blur">
+                <input type="checkbox" checked={selected.includes(item.id)} onChange={() => toggleSelected(item.id)} className="h-4 w-4 accent-[#ad8a49]" />
+                <span className="text-[0.6rem] uppercase tracking-[0.12em]">Download</span>
+              </label>
+            </div>
           ))}
         </div>
+        </div>
+
+        {viewerIndex !== null && filtered[viewerIndex] && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4" onClick={() => setViewerIndex(null)}>
+            <button aria-label="Close" onClick={() => setViewerIndex(null)} className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-3 text-white"><X className="h-5 w-5" /></button>
+            <button aria-label="Previous photo" onClick={e => { e.stopPropagation(); setViewerIndex(i => i === null ? null : (i - 1 + filtered.length) % filtered.length); }} className="absolute left-2 top-1/2 z-10 rounded-full bg-white/10 p-3 text-white"><ChevronLeft className="h-6 w-6" /></button>
+            <div className="flex max-h-[90vh] max-w-[95vw] flex-col items-center" onClick={e => e.stopPropagation()}>
+              {filtered[viewerIndex].type === "photo" ? <img src={filtered[viewerIndex].src} alt={filtered[viewerIndex].name} className="max-h-[78vh] max-w-full object-contain" /> : <video src={filtered[viewerIndex].src} controls autoPlay playsInline className="max-h-[78vh] max-w-full" />}
+              <div className="mt-4 flex w-full max-w-xl items-center justify-between gap-3 rounded-2xl bg-white/10 px-4 py-3 text-white backdrop-blur">
+                <div className="min-w-0"><p className="text-xs uppercase tracking-[0.15em] text-white/50">Table {filtered[viewerIndex].table}</p><p className="truncate text-sm">{filtered[viewerIndex].name}</p></div>
+                <label className="flex shrink-0 items-center gap-2 text-xs"><input type="checkbox" checked={selected.includes(filtered[viewerIndex].id)} onChange={() => toggleSelected(filtered[viewerIndex].id)} className="h-5 w-5 accent-[#ad8a49]" /> Select</label>
+              </div>
+            </div>
+            <button aria-label="Next photo" onClick={e => { e.stopPropagation(); setViewerIndex(i => i === null ? null : (i + 1) % filtered.length); }} className="absolute right-2 top-1/2 z-10 rounded-full bg-white/10 p-3 text-white"><ChevronRight className="h-6 w-6" /></button>
+          </div>
+        )}
 
         <section className="mt-12 rounded-3xl bg-[#292823] p-6 text-white md:p-8">
           <div className="flex items-start gap-4"><ImagePlus className="mt-1 h-5 w-5 text-[#d4b56e]" /><div><h2 className="font-serif text-2xl italic">Preview mode</h2><p className="mt-2 text-sm leading-6 text-white/65">Uploads are stored in this browser during preview. They will be shared across all phones once the final wedding storage is connected.</p></div></div>
