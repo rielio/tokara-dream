@@ -71,7 +71,7 @@ function WeddingGame() {
 
   return (
     <main className="min-h-screen bg-[#292823] text-white">
-      <header className="border-b border-white/10 px-4 py-4">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#292823]/95 px-4 py-4 backdrop-blur">
         <div className="mx-auto flex max-w-lg items-center justify-between">
           <Link to="/" className="font-serif text-xl tracking-[0.25em]">R <span className="text-[#d4b56e]">&</span> C</Link>
           <Link to="/photos" className="text-xs uppercase tracking-[0.18em] text-white/65">Photos</Link>
