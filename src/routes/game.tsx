@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Camera, Check, ChevronRight, Trophy } from "lucide-react";
+import { loadGame, saveGame } from "@/lib/wedding-preview";
 
 export const Route = createFileRoute("/game")({ component: WeddingGame });
 
@@ -17,7 +18,11 @@ const challenges = [
 
 function WeddingGame() {
   const [table, setTable] = useState("4");
-  const [done, setDone] = useState<number[]>([]);
+  const [done, setDone] = useState<number[]>(() => loadGame(Number(table)));
+  const [lastTable, setLastTable] = useState(table);
+  useEffect(() => { if (lastTable !== table) { setDone(loadGame(Number(table))); setLastTable(table); } }, [table, lastTable]);
+  useEffect(() => { saveGame(Number(table), done); }, [table, done]);
+
   const points = useMemo(() => challenges.reduce((sum, item, index) => done.includes(index) ? sum + item.points : sum, 0), [done]);
   const leaderboard = [{ table: 4, score: points }, { table: 7, score: 155 }, { table: 2, score: 140 }, { table: 1, score: 120 }].sort((a,b) => b.score-a.score);
 
