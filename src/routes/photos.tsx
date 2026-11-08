@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Download, ImagePlus, Play, Search, Trophy, Upload, Users, X } from "lucide-react";
 
@@ -8,6 +8,7 @@ import g3 from "@/assets/g3.jpg";
 import g4 from "@/assets/g4.jpg";
 import g5 from "@/assets/g5.jpg";
 import g6 from "@/assets/g6.jpg";
+import { getWeddingMedia, mediaUrl, saveWeddingMedia, type WeddingMedia } from "@/lib/wedding-preview";
 
 export const Route = createFileRoute("/photos")({ component: GuestPhotos });
 
@@ -24,39 +25,54 @@ const initialMedia: Media[] = [
 
 function GuestPhotos() {
   const [table, setTable] = useState("all");
+  const [media, setMedia] = useState<MediaView[]>(demoMedia);
   const [selected, setSelected] = useState<string[]>([]);
-  const [media, setMedia] = useState(initialMedia);
+  const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const filtered = useMemo(
-    () => table === "all" ? media : media.filter((item) => item.table === Number(table)),
-    [media, table],
-  );
+  useEffect(() => {
+    const queryTable = new URLSearchParams(window.location.search).get("table");
+    if (queryTable && /^[1-8]$/.test(queryTable)) setTable(queryTable);
+    let urls: string[] = [];
+    getWeddingMedia().then(items => {
+      urls = items.map(item => mediaUrl(item.blob));
+      setMedia(current => [...items.map((item, i) => ({ id: item.id, src: urls[i], type: item.type, table: item.table, name: item.name })), ...current]);
+    });
+    return () => urls.forEach(URL.revokeObjectURL);
+  }, []);
+
+  const filtered = useMemo(() => table === "all" ? media : media.filter(item => item.table === Number(table)), [media, table]);
 
   function toggle(id: string) {
-    setSelected((current) => current.includes(id) ? current.filter((x) => x !== id) : [...current, id]);
+    setSelected(current => current.includes(id) ? current.filter(x => x !== id) : [...current, id]);
   }
 
-  function addFiles(files: FileList | null) {
+  async function addFiles(files: FileList | null) {
     if (!files) return;
-    const additions: Media[] = Array.from(files).map((file, index) => ({
-      id: `upload-${Date.now()}-${index}`,
-      src: URL.createObjectURL(file),
-      type: file.type.startsWith("video/") ? "video" : "photo",
-      table: 1,
-      name: file.name,
-    }));
-    setMedia((current) => [...additions, ...current]);
+    setBusy(true);
+    const rawTable = Number(new URLSearchParams(window.location.search).get("table") || table || 1);
+    const safeTable = Number.isInteger(rawTable) && rawTable >= 1 && rawTable <= 8 ? rawTable : 1;
+    const additions: MediaView[] = [];
+    for (const file of Array.from(files)) {
+      const item: WeddingMedia = { id: `upload-${Date.now()}-${crypto.randomUUID()}`, blob: file, type: file.type.startsWith("video/") ? "video" : "photo", table: safeTable, name: file.name, createdAt: Date.now() };
+      await saveWeddingMedia(item);
+      additions.push({ id: item.id, src: mediaUrl(file), type: item.type, table: safeTable, name: item.name });
+    }
+    setMedia(current => [...additions, ...current]);
+    setSelected(current => [...additions.map(x => x.id), ...current]);
+    setBusy(false);
   }
 
-  function download(items: Media[]) {
-    items.forEach((item, index) => {
+  async function download(items: MediaView[]) {
+    for (const [index, item] of items.entries()) {
       const a = document.createElement("a");
       a.href = item.src;
-      a.download = `riel-cara-${item.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase() || index + 1}`;
-      a.target = "_blank";
+      a.download = `riel-cara-table-${item.table}-${item.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase() || index + 1}`;
+      document.body.appendChild(a);
       a.click();
-    });
+      a.remove();
+      await new Promise(r => setTimeout(r, 250));
+    }
   }
 
   return (
@@ -67,63 +83,17 @@ function GuestPhotos() {
           <Link to="/game" className="flex items-center gap-2 text-xs uppercase tracking-[0.18em]"><Trophy className="h-4 w-4 text-[#ad8a49]" /> Game</Link>
         </div>
       </header>
-
-      <section className="mx-auto max-w-5xl px-4 pb-10 pt-10 md:px-8 md:pt-16">
+      <section className="mx-auto max-w-5xl px-4 pb-12 pt-10 md:px-8 md:pt-16">
         <p className="text-[0.65rem] uppercase tracking-[0.35em] text-[#9b865f]">Wedding memories</p>
-        <div className="mt-3 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h1 className="font-serif text-5xl italic md:text-6xl">Photos & videos</h1>
-            <p className="mt-3 max-w-xl text-sm leading-7 text-[#6e6a61]">Share the moments you capture. This preview already shows the experience guests will use from their phones.</p>
-          </div>
-          <button onClick={() => fileRef.current?.click()} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#292823] px-6 text-xs uppercase tracking-[0.2em] text-white">
-            <Upload className="h-4 w-4" /> Add photos / videos
-          </button>
-          <input ref={fileRef} type="file" accept="image/*,video/*" multiple hidden onChange={(e) => addFiles(e.target.files)} />
+        <div className="mt-3 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div><h1 className="font-serif text-5xl italic md:text-6xl">Photos & videos</h1><p className="mt-3 max-w-xl text-sm leading-7 text-[#6e6a61]">A phone-first place for every table to share the moments they capture.</p></div>
+          <button disabled={busy} onClick={() => fileRef.current?.click()} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#292823] px-6 text-xs uppercase tracking-[0.2em] text-white disabled:opacity-50"><Upload className="h-4 w-4" /> {busy ? "Saving..." : "Add photos / videos"}</button>
+          <input ref={fileRef} type="file" accept="image/*,video/*" multiple hidden onChange={e => addFiles(e.target.files)} />
         </div>
-
-        <div className="mt-8 flex gap-2 overflow-x-auto pb-2">
-          {["all","1","2","3","4","5","6","7","8"].map((value) => (
-            <button key={value} onClick={() => setTable(value)} className={`shrink-0 rounded-full border px-4 py-2 text-xs uppercase tracking-[0.16em] ${table === value ? "border-[#292823] bg-[#292823] text-white" : "border-[#d9cfbd] bg-white/50"}`}>
-              {value === "all" ? "All tables" : `Table ${value}`}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#ded5c6] bg-white/60 px-4 py-3">
-          <span className="text-xs text-[#6e6a61]">{filtered.length} memories shown{selected.length ? ` · ${selected.length} selected` : ""}</span>
-          <div className="flex gap-2">
-            {selected.length > 0 && <button onClick={() => download(filtered.filter((x) => selected.includes(x.id)))} className="inline-flex items-center gap-2 rounded-full border border-[#bfa878] px-4 py-2 text-xs uppercase tracking-[0.15em]"><Download className="h-4 w-4" /> Download selected</button>}
-            <button onClick={() => download(filtered)} className="inline-flex items-center gap-2 rounded-full border border-[#bfa878] px-4 py-2 text-xs uppercase tracking-[0.15em]"><Download className="h-4 w-4" /> Download all</button>
-          </div>
-        </div>
-
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-5">
-          {filtered.map((item) => (
-            <button key={item.id} onClick={() => toggle(item.id)} className={`group relative overflow-hidden rounded-2xl bg-white text-left shadow-sm ${selected.includes(item.id) ? "ring-2 ring-[#ad8a49]" : ""}`}>
-              {item.type === "photo" ? (
-                <img src={item.src} alt={item.name} className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-105" />
-              ) : (
-                <video src={item.src} className="aspect-[4/5] w-full object-cover" muted playsInline />
-              )}
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 pt-10 text-white">
-                <p className="text-[0.65rem] uppercase tracking-[0.16em]">Table {item.table}</p>
-                <p className="mt-1 text-xs">{item.name}</p>
-              </div>
-              {item.type === "video" && <span className="absolute left-3 top-3 rounded-full bg-black/50 p-2 text-white"><Play className="h-3 w-3 fill-current" /></span>}
-              {selected.includes(item.id) && <span className="absolute right-3 top-3 rounded-full bg-[#ad8a49] p-2 text-white"><Download className="h-3 w-3" /></span>}
-            </button>
-          ))}
-        </div>
-
-        <section className="mt-12 rounded-3xl bg-[#292823] p-6 text-white md:p-8">
-          <div className="flex items-start gap-4">
-            <ImagePlus className="mt-1 h-5 w-5 text-[#d4b56e]" />
-            <div>
-              <h2 className="font-serif text-2xl italic">How the real version will work</h2>
-              <p className="mt-2 text-sm leading-6 text-white/65">Every table gets a private QR link. Uploads are automatically tagged to that table, so nobody has to choose their table manually.</p>
-            </div>
-          </div>
-        </section>
+        <div className="mt-8 flex gap-2 overflow-x-auto pb-2">{["all","1","2","3","4","5","6","7","8"].map(value => <button key={value} onClick={() => setTable(value)} className={`shrink-0 rounded-full border px-4 py-2 text-xs uppercase tracking-[0.16em] ${table === value ? "border-[#292823] bg-[#292823] text-white" : "border-[#d9cfbd] bg-white/50"}`}>{value === "all" ? "All tables" : `Table ${value}`}</button>)}</div>
+        <div className="mt-6 rounded-2xl border border-[#ded5c6] bg-white/60 p-3"><div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><span className="px-1 text-xs text-[#6e6a61]">{filtered.length} memories · {selected.length} selected</span><div className="flex gap-2">{selected.length > 0 && <button onClick={() => download(filtered.filter(x => selected.includes(x.id)))} className="inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-full border border-[#bfa878] px-4 text-[0.65rem] uppercase tracking-[0.15em] sm:flex-none"><Download className="h-4 w-4" /> Download selected</button>}<button onClick={() => download(filtered)} className="inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-full border border-[#bfa878] px-4 text-[0.65rem] uppercase tracking-[0.15em] sm:flex-none"><Download className="h-4 w-4" /> Download all</button></div></div></div>
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-5">{filtered.map(item => <button key={item.id} onClick={() => toggle(item.id)} className={`group relative overflow-hidden rounded-2xl bg-white text-left shadow-sm ${selected.includes(item.id) ? "ring-2 ring-[#ad8a49]" : ""}`}>{item.type === "photo" ? <img src={item.src} alt={item.name} className="aspect-[4/5] w-full object-cover" /> : <video src={item.src} className="aspect-[4/5] w-full object-cover" muted playsInline controls />}<div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 pt-10 text-white"><p className="text-[0.65rem] uppercase tracking-[0.16em]">Table {item.table}</p><p className="mt-1 truncate text-xs">{item.name}</p></div>{item.type === "video" && <span className="absolute left-3 top-3 rounded-full bg-black/50 p-2 text-white"><Play className="h-3 w-3 fill-current" /></span>}{selected.includes(item.id) && <span className="absolute right-3 top-3 rounded-full bg-[#ad8a49] p-2 text-white"><Download className="h-3 w-3" /></span>}</button>)}</div>
+        <section className="mt-12 rounded-3xl bg-[#292823] p-6 text-white md:p-8"><div className="flex items-start gap-4"><ImagePlus className="mt-1 h-5 w-5 text-[#d4b56e]" /><div><h2 className="font-serif text-2xl italic">Preview mode</h2><p className="mt-2 text-sm leading-6 text-white/65">Uploads persist on this browser in preview mode. The same interface can later be connected to shared wedding storage.</p></div></div></section>
       </section>
     </main>
   );
