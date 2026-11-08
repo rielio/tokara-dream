@@ -129,6 +129,8 @@ const NAV = [
   { label: "The Day", href: "#day" },
   { label: "Venue", href: "#venue" },
   { label: "Accommodation", href: "#stay" },
+  { label: "Photos", href: "/photos" },
+  { label: "Game", href: "/game" },
   { label: "Gifts", href: "#gifts" },
   { label: "RSVP", href: "#rsvp" },
 ];
