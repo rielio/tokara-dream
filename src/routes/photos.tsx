@@ -1,0 +1,130 @@
+import { useMemo, useRef, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Download, ImagePlus, Play, Search, Trophy, Upload, Users, X } from "lucide-react";
+
+import g1 from "@/assets/g1.jpg";
+import g2 from "@/assets/g2.jpg";
+import g3 from "@/assets/g3.jpg";
+import g4 from "@/assets/g4.jpg";
+import g5 from "@/assets/g5.jpg";
+import g6 from "@/assets/g6.jpg";
+
+export const Route = createFileRoute("/photos")({ component: GuestPhotos });
+
+type Media = { id: string; src: string; type: "photo" | "video"; table: number; name: string };
+
+const initialMedia: Media[] = [
+  { id: "1", src: g1, type: "photo", table: 1, name: "Golden hour", },
+  { id: "2", src: g2, type: "photo", table: 2, name: "Cheers", },
+  { id: "3", src: g3, type: "photo", table: 3, name: "The table", },
+  { id: "4", src: g4, type: "photo", table: 1, name: "Dance floor", },
+  { id: "5", src: g5, type: "photo", table: 4, name: "Vineyard", },
+  { id: "6", src: g6, type: "photo", table: 5, name: "Best friends", },
+];
+
+function GuestPhotos() {
+  const [table, setTable] = useState("all");
+  const [selected, setSelected] = useState<string[]>([]);
+  const [media, setMedia] = useState(initialMedia);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const filtered = useMemo(
+    () => table === "all" ? media : media.filter((item) => item.table === Number(table)),
+    [media, table],
+  );
+
+  function toggle(id: string) {
+    setSelected((current) => current.includes(id) ? current.filter((x) => x !== id) : [...current, id]);
+  }
+
+  function addFiles(files: FileList | null) {
+    if (!files) return;
+    const additions: Media[] = Array.from(files).map((file, index) => ({
+      id: `upload-${Date.now()}-${index}`,
+      src: URL.createObjectURL(file),
+      type: file.type.startsWith("video/") ? "video" : "photo",
+      table: 1,
+      name: file.name,
+    }));
+    setMedia((current) => [...additions, ...current]);
+  }
+
+  function download(items: Media[]) {
+    items.forEach((item, index) => {
+      const a = document.createElement("a");
+      a.href = item.src;
+      a.download = `riel-cara-${item.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase() || index + 1}`;
+      a.target = "_blank";
+      a.click();
+    });
+  }
+
+  return (
+    <main className="min-h-screen bg-[#f8f5ef] text-[#292823]">
+      <header className="sticky top-0 z-20 border-b border-[#d9cfbd] bg-[#f8f5ef]/95 px-4 py-4 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between">
+          <Link to="/" className="font-serif text-xl tracking-[0.25em]">R <span className="text-[#ad8a49]">&</span> C</Link>
+          <Link to="/game" className="flex items-center gap-2 text-xs uppercase tracking-[0.18em]"><Trophy className="h-4 w-4 text-[#ad8a49]" /> Game</Link>
+        </div>
+      </header>
+
+      <section className="mx-auto max-w-5xl px-4 pb-10 pt-10 md:px-8 md:pt-16">
+        <p className="text-[0.65rem] uppercase tracking-[0.35em] text-[#9b865f]">Wedding memories</p>
+        <div className="mt-3 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="font-serif text-5xl italic md:text-6xl">Photos & videos</h1>
+            <p className="mt-3 max-w-xl text-sm leading-7 text-[#6e6a61]">Share the moments you capture. This preview already shows the experience guests will use from their phones.</p>
+          </div>
+          <button onClick={() => fileRef.current?.click()} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#292823] px-6 text-xs uppercase tracking-[0.2em] text-white">
+            <Upload className="h-4 w-4" /> Add photos / videos
+          </button>
+          <input ref={fileRef} type="file" accept="image/*,video/*" multiple hidden onChange={(e) => addFiles(e.target.files)} />
+        </div>
+
+        <div className="mt-8 flex gap-2 overflow-x-auto pb-2">
+          {["all","1","2","3","4","5","6","7","8"].map((value) => (
+            <button key={value} onClick={() => setTable(value)} className={`shrink-0 rounded-full border px-4 py-2 text-xs uppercase tracking-[0.16em] ${table === value ? "border-[#292823] bg-[#292823] text-white" : "border-[#d9cfbd] bg-white/50"}`}>
+              {value === "all" ? "All tables" : `Table ${value}`}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#ded5c6] bg-white/60 px-4 py-3">
+          <span className="text-xs text-[#6e6a61]">{filtered.length} memories shown{selected.length ? ` · ${selected.length} selected` : ""}</span>
+          <div className="flex gap-2">
+            {selected.length > 0 && <button onClick={() => download(filtered.filter((x) => selected.includes(x.id)))} className="inline-flex items-center gap-2 rounded-full border border-[#bfa878] px-4 py-2 text-xs uppercase tracking-[0.15em]"><Download className="h-4 w-4" /> Download selected</button>}
+            <button onClick={() => download(filtered)} className="inline-flex items-center gap-2 rounded-full border border-[#bfa878] px-4 py-2 text-xs uppercase tracking-[0.15em]"><Download className="h-4 w-4" /> Download all</button>
+          </div>
+        </div>
+
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-5">
+          {filtered.map((item) => (
+            <button key={item.id} onClick={() => toggle(item.id)} className={`group relative overflow-hidden rounded-2xl bg-white text-left shadow-sm ${selected.includes(item.id) ? "ring-2 ring-[#ad8a49]" : ""}`}>
+              {item.type === "photo" ? (
+                <img src={item.src} alt={item.name} className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-105" />
+              ) : (
+                <video src={item.src} className="aspect-[4/5] w-full object-cover" muted playsInline />
+              )}
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 pt-10 text-white">
+                <p className="text-[0.65rem] uppercase tracking-[0.16em]">Table {item.table}</p>
+                <p className="mt-1 text-xs">{item.name}</p>
+              </div>
+              {item.type === "video" && <span className="absolute left-3 top-3 rounded-full bg-black/50 p-2 text-white"><Play className="h-3 w-3 fill-current" /></span>}
+              {selected.includes(item.id) && <span className="absolute right-3 top-3 rounded-full bg-[#ad8a49] p-2 text-white"><Download className="h-3 w-3" /></span>}
+            </button>
+          ))}
+        </div>
+
+        <section className="mt-12 rounded-3xl bg-[#292823] p-6 text-white md:p-8">
+          <div className="flex items-start gap-4">
+            <ImagePlus className="mt-1 h-5 w-5 text-[#d4b56e]" />
+            <div>
+              <h2 className="font-serif text-2xl italic">How the real version will work</h2>
+              <p className="mt-2 text-sm leading-6 text-white/65">Every table gets a private QR link. Uploads are automatically tagged to that table, so nobody has to choose their table manually.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  );
+}
